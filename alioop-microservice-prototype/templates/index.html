@@ -1,0 +1,145 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Alioop – Comms + Preferences Service</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <style>
+      body { max-width: 1200px; margin: auto; }
+      .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+      .pill { padding: .2rem .6rem; border-radius: 999px; background: #f3f4f6; }
+      .badge { font-size: .8rem; }
+      .row { display:flex; gap:.5rem; align-items:center; }
+    </style>
+  </head>
+  <body>
+    <h2>🏀 Alioop – Comms + Preferences Microservice (Local)</h2>
+
+    <article>
+      <h4>New Client</h4>
+      <form id="clientForm" onsubmit="return createClient(event)">
+        <div class="grid">
+          <div><label>Name <input name="name" required/></label></div>
+          <div><label>Email <input name="email" type="email"/></label></div>
+          <div>
+            <label>Phone <input name="phone" id="phone_input" placeholder="+1 978-338-7220 or 978-338-7220"/></label>
+            <small>Any format works - we'll format it automatically</small>
+          </div>
+          <div>
+            <label>
+              <input type="checkbox" name="use_masked_phone" role="switch"/>
+              Use Phone Masking (Privacy Protection)
+            </label>
+            <small>Hide your real phone number from clients when texting</small>
+          </div>
+          <div>
+            <label>Delivery Preference
+              <select name="delivery_pref" onchange="toggleDeliveryCustom(this.value)">
+                <option>Drive</option><option>Dropbox</option><option>WeTransfer</option><option>Custom</option>
+              </select>
+            </label>
+            <label id="delivery_custom" style="display:none;">Custom URL <input name="delivery_custom_url"/></label>
+          </div>
+          <div>
+            <label>Payment Preference
+              <select name="payment_pref" onchange="togglePaymentCustom(this.value)">
+                <option>Stripe</option><option>PayPal</option><option>Zelle</option><option>Custom</option>
+              </select>
+            </label>
+            <label id="payment_custom" style="display:none;">Custom URL <input name="payment_custom_url"/></label>
+          </div>
+        </div>
+        <button type="submit">Add Client</button>
+      </form>
+    </article>
+
+    <article>
+      <h4>New Project</h4>
+      <form id="projectForm" onsubmit="return createProject(event)">
+        <div class="grid">
+          <div>
+            <label>Client
+              <select name="client_id" id="clientSelect" required>
+                <option value="">-- Select a Client --</option>
+                {% for c in clients %}<option value="{{c.id}}">{{c.name}}</option>{% endfor %}
+              </select>
+            </label>
+          </div>
+          <div><label>Title <input name="title" required/></label></div>
+        </div>
+        <div>
+          <label>Notes <textarea name="notes" rows="2"></textarea></label>
+        </div>
+        <button type="submit">Create Project</button>
+      </form>
+    </article>
+
+    <div class="grid">
+      <article>
+        <h4>Clients</h4>
+        <ul>
+          {% for c in clients %}
+          <li>
+            <strong>{{c.name}}</strong>
+            <span class="badge pill mono">{{c.email or '—'}} | {{c.phone or '—'}}</span>
+            {% if c.use_masked_phone and masked_phones.get(c.id) %}
+              <span class="badge pill" style="background:#d1fae5;color:#065f46;">🔒 Masked: {{masked_phones[c.id]}}</span>
+            {% endif %}
+            <button onclick="openSendToClient({{c.id}})" style="float:right;">Message</button>
+            <br/>
+            Delivery: <span class="pill">{{c.delivery_pref}}</span>
+            {% if c.delivery_pref == 'Custom' and c.delivery_custom_url %}<span class="mono">{{c.delivery_custom_url}}</span>{% endif %}
+            &nbsp;•&nbsp;
+            Payment: <span class="pill">{{c.payment_pref}}</span>
+            {% if c.payment_pref == 'Custom' and c.payment_custom_url %}<span class="mono">{{c.payment_custom_url}}</span>{% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+      </article>
+
+      <article>
+        <h4>Projects</h4>
+        <table>
+          <thead><tr><th>Title</th><th>Client</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+          {% for p in projects %}
+            <tr>
+              <td>{{p.title}}</td>
+              <td>{{p.client_name}}</td>
+              <td><span class="pill">{{p.status}}</span></td>
+              <td class="row">
+                <button onclick="completeProject({{p.id}})">Mark Complete + Notify</button>
+                <button onclick="openSend({{p.id}})">Message</button>
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </article>
+    </div>
+
+    <dialog id="sendDialog">
+      <article>
+        <h3>Send Message</h3>
+        <form id="sendForm" onsubmit="return sendMessage(event)">
+          <input type="hidden" name="client_id" id="send_client_id"/>
+          <label>Channel
+            <select name="channel">
+              <option value="email">Email</option>
+              <option value="sms">SMS</option>
+            </select>
+          </label>
+          <label>Message <textarea name="body" rows="4" placeholder="Write your message..."></textarea></label>
+          <footer>
+            <button type="submit">Send</button>
+            <button type="button" class="secondary" onclick="document.getElementById('sendDialog').close()">Cancel</button>
+          </footer>
+        </form>
+      </article>
+    </dialog>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
