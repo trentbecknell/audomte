@@ -4,6 +4,22 @@ All notable changes to the Alioop Comms + Preferences Microservice will be docum
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.0] - 2025-10-28
+
+### Added
+- 🧪 **quick_email_test.py** - Simple email testing utility
+- 🔧 **setup_sendgrid.py** - Interactive SendGrid configuration wizard
+- 🔑 **test_sendgrid_key.py** - API key validation tool
+
+### Changed
+- ✅ **Email Integration Verified** - SendGrid fully tested and operational
+- 📧 Email sending now confirmed working in production
+- 🔧 Improved email setup documentation and troubleshooting
+
+### Fixed
+- 🐛 SendGrid configuration workflow streamlined
+- 📝 Better error messages for email authentication issues
+
 ## [1.0.0] - 2025-10-27
 
 ### Added
