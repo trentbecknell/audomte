@@ -565,32 +565,25 @@ async def api_upload_delivery(
     conn.commit()
     
     # Send notification to customer
-    from .adapters.messaging import send_email, send_sms
+    messaging = MessagingAdapter()
     
     download_url = f"http://localhost:8000/delivery/{download_token}"
     
     # Email notification
     if client['email']:
         email_subject = f"Your {service['name']} is Ready!"
-        email_body = f"""
-        <html>
-        <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #4CAF50;">🎵 Your Audio is Ready!</h2>
-            <p>Hi {client['name']},</p>
-            <p>Your <strong>{service['name']}</strong> for <strong>{file.filename}</strong> is complete!</p>
-            <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                <h3>📥 Download Your File</h3>
-                <p><a href="{download_url}" style="display: inline-block; background: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">DOWNLOAD NOW</a></p>
-            </div>
-            <div style="background: #fff3cd; padding: 20px; border-radius: 8px;">
-                <h3>💰 Payment: ${price:.2f}</h3>
-                <p>Payment options available on the download page.</p>
-            </div>
-        </body>
-        </html>
-        """
+        email_body = f"""Hi {client['name']},
+
+Your <strong>{service['name']}</strong> for <strong>{file.filename}</strong> is complete!
+
+<h3>📥 Download Your File</h3>
+<p><a href="{download_url}" style="display: inline-block; background: linear-gradient(135deg, #f05709 0%, #d94d08 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold;">DOWNLOAD NOW</a></p>
+
+<h3>💰 Payment: ${price:.2f}</h3>
+<p>Payment options available on the download page.</p>
+"""
         try:
-            send_email(client['email'], email_subject, email_body)
+            messaging.send_email(client['email'], email_subject, email_body)
             print(f"✅ Email sent to {client['email']}")
         except Exception as e:
             print(f"❌ Email failed: {e}")
@@ -599,7 +592,7 @@ async def api_upload_delivery(
     if client['phone']:
         sms_body = f"🎵 Your {service['name']} is ready! Download: {download_url} | Payment: ${price:.2f}"
         try:
-            send_sms(client['phone'], sms_body)
+            messaging.send_sms(client['phone'], sms_body)
             print(f"✅ SMS sent to {client['phone']}")
         except Exception as e:
             print(f"❌ SMS failed: {e}")
