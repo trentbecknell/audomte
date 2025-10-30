@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Audio Delivery Portal - Engineer Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -12,8 +15,8 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #161614 0%, #0a0a09 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -22,30 +25,34 @@
         }
         
         .container {
-            background: white;
+            background: #fcf5eb;
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            box-shadow: 0 20px 60px rgba(240, 87, 9, 0.2);
             max-width: 1000px;
             width: 100%;
             overflow: hidden;
+            border: 1px solid rgba(240, 87, 9, 0.1);
         }
         
         .header {
-            background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
-            color: white;
+            background: linear-gradient(135deg, #161614 0%, #2a2a27 100%);
+            color: #fcf5eb;
             padding: 40px;
             text-align: center;
+            border-bottom: 3px solid #f05709;
         }
         
         .header h1 {
             font-size: 36px;
             margin-bottom: 10px;
             font-weight: 700;
+            letter-spacing: -0.02em;
         }
         
         .header p {
             font-size: 16px;
             opacity: 0.9;
+            color: #fcf5eb;
         }
         
         .content {
@@ -54,7 +61,7 @@
         
         .tabs {
             display: flex;
-            border-bottom: 2px solid #e0e0e0;
+            border-bottom: 2px solid #71706e;
             margin-bottom: 30px;
         }
         
@@ -67,18 +74,18 @@
             background: none;
             font-size: 16px;
             font-weight: 600;
-            color: #666;
+            color: #71706e;
             transition: all 0.3s;
         }
         
         .tab.active {
-            color: #e94560;
-            border-bottom: 3px solid #e94560;
+            color: #f05709;
+            border-bottom: 3px solid #f05709;
             margin-bottom: -2px;
         }
         
         .tab:hover {
-            color: #e94560;
+            color: #f05709;
         }
         
         .tab-content {
@@ -96,20 +103,20 @@
         }
         
         .upload-zone {
-            border: 3px dashed #e94560;
+            border: 3px dashed #f05709;
             border-radius: 12px;
             padding: 60px 40px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
-            background: #f8f9fa;
+            background: #fcf5eb;
             margin-bottom: 30px;
         }
         
         .upload-zone:hover,
         .upload-zone.dragover {
-            background: #fff5f7;
-            border-color: #c7304a;
+            background: #fff9f0;
+            border-color: #d94d08;
             transform: scale(1.02);
         }
         
@@ -157,7 +164,7 @@
         .form-group select:focus,
         .form-group input:focus {
             outline: none;
-            border-color: #e94560;
+            border-color: #f05709;
         }
         
         .btn {
@@ -169,16 +176,17 @@
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
+            font-family: 'Space Grotesk', sans-serif;
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, #e94560 0%, #c7304a 100%);
-            color: white;
+            background: linear-gradient(135deg, #f05709 0%, #d94d08 100%);
+            color: #fcf5eb;
         }
         
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(233, 69, 96, 0.4);
+            box-shadow: 0 5px 15px rgba(240, 87, 9, 0.4);
         }
         
         .btn-primary:disabled {
@@ -242,7 +250,7 @@
         
         .progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, #e94560 0%, #c7304a 100%);
+            background: linear-gradient(90deg, #f05709 0%, #d94d08 100%);
             width: 0%;
             transition: width 0.3s;
         }
@@ -294,7 +302,7 @@
         .stat-card .number {
             font-size: 32px;
             font-weight: bold;
-            color: #e94560;
+            color: #f05709;
             margin-bottom: 5px;
         }
         
