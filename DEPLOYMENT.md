@@ -36,9 +36,15 @@ This repository is configured for automatic deployment to production via GitHub 
    - Click "New Project"
    - Select "Deploy from GitHub repo"
    - Choose `trentbecknell/audomte`
+   - Railway will ask for permission to access your repo - approve it
 
-3. **Configure Environment Variables**
-   Add these in Railway dashboard:
+3. **Configure Service**
+   - Railway will auto-detect it's a Python app
+   - Root Directory: Leave blank (Railway will find the Dockerfile)
+   - Or manually set: Start Command: `cd alioop-microservice-prototype && uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+
+4. **Configure Environment Variables**
+   In Railway dashboard, go to your service → Variables tab:
    ```
    SENDGRID_API_KEY=your_sendgrid_key
    SENDGRID_FROM_EMAIL=your@email.com
@@ -47,22 +53,12 @@ This repository is configured for automatic deployment to production via GitHub 
    TWILIO_PHONE_NUMBER=your_twilio_number
    ```
 
-4. **Get Railway Token (for GitHub Actions)**
-   - Railway Dashboard → Account Settings → Tokens
-   - Create new token
-   - Copy the token
+5. **Deploy!**
+   - Railway automatically deploys on every push to main
+   - Your app will be live at: `https://your-app.up.railway.app`
+   - Click "Generate Domain" in Railway dashboard to get your URL
 
-5. **Add to GitHub Secrets**
-   - Go to: https://github.com/trentbecknell/audomte/settings/secrets/actions
-   - Click "New repository secret"
-   - Name: `RAILWAY_TOKEN`
-   - Value: [paste your token]
-   - Click "Add secret"
-
-6. **Deploy!**
-   - Push to main branch
-   - GitHub Actions will automatically deploy
-   - Your app will be live at: `https://your-app.railway.app`
+**Note:** Railway automatically redeploys when you push to GitHub - no GitHub Actions token needed!
 
 ---
 
