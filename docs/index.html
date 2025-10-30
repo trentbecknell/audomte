@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alioop - Audio Delivery Micro-SaaS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 60px;
+        }
+        
+        header h1 {
+            font-size: 56px;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        header .tagline {
+            font-size: 24px;
+            opacity: 0.95;
+            margin-bottom: 30px;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 15px 40px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: white;
+            color: #667eea;
+        }
+        
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        
+        .content {
+            background: white;
+            border-radius: 20px;
+            padding: 60px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 40px;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .feature {
+            text-align: center;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            transition: transform 0.3s;
+        }
+        
+        .feature:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature .icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        .feature h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+        
+        .feature p {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .demo-section {
+            background: #e8f5e9;
+            padding: 40px;
+            border-radius: 12px;
+            margin: 40px 0;
+            border-left: 6px solid #4CAF50;
+        }
+        
+        .demo-section h2 {
+            color: #2e7d32;
+            margin-bottom: 20px;
+        }
+        
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        .tech-badge {
+            background: #667eea;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .code-block pre {
+            margin: 0;
+        }
+        
+        footer {
+            text-align: center;
+            color: white;
+            padding: 40px 20px;
+            opacity: 0.9;
+        }
+        
+        footer a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .screenshot {
+            width: 100%;
+            max-width: 800px;
+            margin: 30px auto;
+            display: block;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 36px;
+            }
+            
+            header .tagline {
+                font-size: 18px;
+            }
+            
+            .content {
+                padding: 30px 20px;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎵 Alioop</h1>
+            <p class="tagline">Audio Delivery Micro-SaaS Platform</p>
+            <p style="font-size: 18px; margin-top: 20px;">Drop files. Notify clients. Get paid. Zero hassle.</p>
+            
+            <div class="hero-buttons">
+                <a href="https://github.com/trentbecknell/audomte" class="btn btn-primary">
+                    📦 View on GitHub
+                </a>
+                <a href="#quick-start" class="btn btn-secondary">
+                    🚀 Quick Start
+                </a>
+            </div>
+        </header>
+        
+        <div class="content">
+            <h2 style="text-align: center; color: #667eea; margin-bottom: 40px; font-size: 32px;">
+                The Simplest Way to Deliver Audio Files
+            </h2>
+            
+            <div class="features">
+                <div class="feature">
+                    <div class="icon">📤</div>
+                    <h3>Drag & Drop Upload</h3>
+                    <p>Beautiful web interface with drag-and-drop file uploads. No command line required for engineers.</p>
+                </div>
+                
+                <div class="feature">
+                    <div class="icon">🔔</div>
+                    <h3>Auto Notifications</h3>
+                    <p>Customers receive instant email and SMS notifications with secure download links.</p>
+                </div>
+                
+                <div class="feature">
+                    <div class="icon">💰</div>
+                    <h3>Payment Tracking</h3>
+                    <p>Multiple payment options (Zelle, PayPal, CashApp, Venmo) with confirmation workflow.</p>
+                </div>
+                
+                <div class="feature">
+                    <div class="icon">🔒</div>
+                    <h3>Secure Downloads</h3>
+                    <p>32-byte secure tokens, 30-day expiry, 3-download limit, no customer accounts needed.</p>
+                </div>
+                
+                <div class="feature">
+                    <div class="icon">⚙️</div>
+                    <h3>File Watcher CLI</h3>
+                    <p>Desktop monitoring service - drop files in a folder and the system handles the rest.</p>
+                </div>
+                
+                <div class="feature">
+                    <div class="icon">📊</div>
+                    <h3>Service Pricing</h3>
+                    <p>6 predefined service types with customizable pricing. Fixed or custom quotes per delivery.</p>
+                </div>
+            </div>
+            
+            <div class="demo-section">
+                <h2>🎯 Built for Audio Engineers</h2>
+                <p style="line-height: 1.8; color: #555;">
+                    Alioop solves the real-world problem of delivering finished audio files to clients. 
+                    No more emailing huge files, managing Google Drive links, or chasing payments. 
+                    Just drop the file, select the client, and you're done.
+                </p>
+                <br>
+                <p style="line-height: 1.8; color: #555;">
+                    Two delivery methods: <strong>Web portal</strong> for quick uploads with beautiful UI, 
+                    or <strong>File watcher</strong> for automated processing when files appear in a folder.
+                </p>
+            </div>
+            
+            <h2 id="quick-start" style="margin-top: 60px; margin-bottom: 30px; color: #667eea;">
+                🚀 Quick Start
+            </h2>
+            
+            <div class="code-block">
+                <pre># Clone the repository
+git clone https://github.com/trentbecknell/audomte.git
+cd audomte/alioop-microservice-prototype
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Start the web portal
+python start_portal.py
+
+# Open http://localhost:8000 in your browser</pre>
+            </div>
+            
+            <h3 style="margin-top: 40px; margin-bottom: 20px;">Tech Stack</h3>
+            <div class="tech-stack">
+                <span class="tech-badge">FastAPI 0.115.2</span>
+                <span class="tech-badge">SQLite</span>
+                <span class="tech-badge">Watchdog 4.0.2</span>
+                <span class="tech-badge">SendGrid</span>
+                <span class="tech-badge">Twilio</span>
+                <span class="tech-badge">Jinja2</span>
+                <span class="tech-badge">Python 3.12</span>
+            </div>
+            
+            <h3 style="margin-top: 40px; margin-bottom: 20px;">Key Features</h3>
+            <ul style="line-height: 2; color: #666; padding-left: 30px;">
+                <li><strong>Beautiful Landing Page:</strong> Gradient design, 3-tab interface (Upload/Login/About)</li>
+                <li><strong>Client Management:</strong> Store contact info, delivery preferences, payment methods</li>
+                <li><strong>Service Types:</strong> Mixing ($150), Mastering ($100), Production ($500), Stem Mix ($200), Revisions ($50), Custom</li>
+                <li><strong>Delivery Tracking:</strong> Monitor downloads, expiry dates, payment status</li>
+                <li><strong>Email/SMS Notifications:</strong> Automatic customer notifications with beautiful HTML emails</li>
+                <li><strong>Payment Workflow:</strong> Customer confirms → Engineer verifies → Marked as paid</li>
+                <li><strong>Multi-file Upload:</strong> Process multiple files at once with progress tracking</li>
+                <li><strong>Audio Formats:</strong> WAV, MP3, FLAC, AIFF, M4A, OGG, AAC, WMA</li>
+            </ul>
+            
+            <h3 style="margin-top: 40px; margin-bottom: 20px;">Documentation</h3>
+            <ul style="line-height: 2; color: #666; padding-left: 30px;">
+                <li><a href="https://github.com/trentbecknell/audomte/blob/main/alioop-microservice-prototype/DELIVERY_SYSTEM.md" style="color: #667eea;">File Watcher Documentation</a> - Desktop monitoring service</li>
+                <li><a href="https://github.com/trentbecknell/audomte/blob/main/alioop-microservice-prototype/LANDING_PAGE.md" style="color: #667eea;">Web Portal Documentation</a> - Drag-and-drop interface guide</li>
+                <li><a href="https://github.com/trentbecknell/audomte/blob/main/README.md" style="color: #667eea;">Main README</a> - Project overview and setup</li>
+            </ul>
+            
+            <div style="margin-top: 60px; padding: 30px; background: #fff3cd; border-radius: 12px; border-left: 6px solid #ffc107;">
+                <h3 style="color: #856404; margin-bottom: 15px;">⚠️ Deployment Notes</h3>
+                <p style="color: #856404; line-height: 1.8;">
+                    This is a <strong>FastAPI application</strong> that requires a Python server to run. 
+                    GitHub Pages only hosts static HTML sites. To deploy Alioop, use:
+                </p>
+                <ul style="margin-top: 15px; color: #856404; line-height: 2; padding-left: 30px;">
+                    <li><strong>Heroku:</strong> Free tier available, easy Python deployment</li>
+                    <li><strong>Railway:</strong> Simple deployment with automatic HTTPS</li>
+                    <li><strong>DigitalOcean App Platform:</strong> $5/month, full control</li>
+                    <li><strong>AWS EC2:</strong> Free tier eligible, maximum flexibility</li>
+                    <li><strong>Local/Self-hosted:</strong> Run on your own machine</li>
+                </ul>
+            </div>
+            
+            <div style="margin-top: 40px; text-align: center;">
+                <h3 style="margin-bottom: 20px; color: #333;">Ready to Deploy?</h3>
+                <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                    <a href="https://github.com/trentbecknell/audomte" class="btn btn-primary" style="background: #667eea; color: white;">
+                        📦 Clone from GitHub
+                    </a>
+                    <a href="https://github.com/trentbecknell/audomte/issues" class="btn btn-secondary" style="background: #28a745; color: white; border: none;">
+                        💬 Get Support
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Built by <a href="https://github.com/trentbecknell">Trent Becknell</a></p>
+        <p style="margin-top: 10px; font-size: 14px;">
+            Open source project • <a href="https://github.com/trentbecknell/audomte">Star on GitHub</a>
+        </p>
+    </footer>
+</body>
+</html>
