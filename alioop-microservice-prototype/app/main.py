@@ -18,8 +18,12 @@ from .adapters.phone_masking import PhoneMaskingAdapter
 from .utils import format_phone_number
 
 app = FastAPI(title="Alioop Comms + Preferences Microservice")
-app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
+
+# Get the base directory (parent of app folder)
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")), name="static")
+templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 messaging = MessagingAdapter()
 phone_masking = PhoneMaskingAdapter()
 
@@ -30,6 +34,16 @@ STORAGE_FOLDER.mkdir(parents=True, exist_ok=True)
 @app.on_event("startup")
 def startup():
     init_db()
+
+@app.get("/health")
+def health_check():
+    """Health check endpoint for Railway"""
+    return {
+        "status": "healthy",
+        "static_dir": str(BASE_DIR / "static"),
+        "templates_dir": str(BASE_DIR / "templates"),
+        "storage_dir": str(STORAGE_FOLDER)
+    }
 
 @app.get("/", response_class=HTMLResponse)
 def landing_page(request: Request):
