@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Your Audio - {{ filename }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header .icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .file-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .file-info h2 {
+            color: #4CAF50;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .info-value {
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .download-section {
+            background: #e8f5e9;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .download-btn {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 15px 40px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .download-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+        
+        .download-info {
+            margin-top: 15px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .payment-section {
+            background: #fff3cd;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 4px solid #ffc107;
+            margin-bottom: 20px;
+        }
+        
+        .payment-section h3 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+        
+        .payment-methods {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .payment-method {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .payment-method:hover {
+            border-color: #ffc107;
+            transform: translateY(-2px);
+        }
+        
+        .payment-method .icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .payment-method .name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 3px;
+        }
+        
+        .payment-method .handle {
+            font-size: 12px;
+            color: #666;
+            font-family: monospace;
+        }
+        
+        .paid-btn {
+            background: #28a745;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .paid-btn:hover {
+            background: #218838;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .status-pending { background: #ffc107; color: #856404; }
+        .status-downloaded { background: #17a2b8; color: white; }
+        .status-paid { background: #28a745; color: white; }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            color: #999;
+            font-size: 12px;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+        
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="icon">🎵</div>
+            <h1>Your Audio is Ready!</h1>
+        </div>
+        
+        {% if error %}
+        <div class="alert alert-danger">
+            <strong>❌ Error:</strong> {{ error }}
+        </div>
+        {% else %}
+        
+        <div class="file-info">
+            <h2>{{ service_name }}</h2>
+            <div class="info-row">
+                <span class="info-label">File:</span>
+                <span class="info-value">{{ filename }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Size:</span>
+                <span class="info-value">{{ file_size_mb }} MB</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Downloads:</span>
+                <span class="info-value">{{ download_count }} / {{ max_downloads }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Status:</span>
+                <span class="info-value">
+                    {% if payment_confirmed %}
+                        <span class="status-badge status-paid">✅ Paid</span>
+                    {% elif download_count > 0 %}
+                        <span class="status-badge status-downloaded">📥 Downloaded</span>
+                    {% else %}
+                        <span class="status-badge status-pending">⏳ Pending</span>
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+        
+        <div class="download-section">
+            {% if download_count >= max_downloads %}
+                <p style="color: #dc3545; font-weight: bold;">❌ Maximum downloads reached</p>
+                <p style="margin-top: 10px; color: #666;">Please contact support if you need another download.</p>
+            {% else %}
+                <a href="/delivery/{{ token }}/download" class="download-btn">
+                    📥 DOWNLOAD NOW
+                </a>
+                <p class="download-info">
+                    Available downloads: {{ max_downloads - download_count }} remaining<br>
+                    Link expires: {{ expires_at }}
+                </p>
+            {% endif %}
+        </div>
+        
+        <div class="payment-section">
+            <h3>💰 Payment: ${{ "%.2f"|format(price) }}</h3>
+            
+            {% if payment_confirmed %}
+                <div class="alert alert-success">
+                    ✅ Payment confirmed! Thank you for your business.
+                </div>
+            {% else %}
+                <p style="margin-bottom: 20px; color: #856404;">Please send payment via your preferred method:</p>
+                
+                <div class="payment-methods">
+                    <div class="payment-method" onclick="copyToClipboard('zelle-handle')">
+                        <div class="icon">💵</div>
+                        <div class="name">Zelle</div>
+                        <div class="handle" id="zelle-handle">your@email.com</div>
+                    </div>
+                    
+                    <div class="payment-method" onclick="copyToClipboard('paypal-handle')">
+                        <div class="icon">💳</div>
+                        <div class="name">PayPal</div>
+                        <div class="handle" id="paypal-handle">paypal.me/yourhandle</div>
+                    </div>
+                    
+                    <div class="payment-method" onclick="copyToClipboard('cashapp-handle')">
+                        <div class="icon">📱</div>
+                        <div class="name">Cash App</div>
+                        <div class="handle" id="cashapp-handle">$YourCashApp</div>
+                    </div>
+                    
+                    <div class="payment-method" onclick="copyToClipboard('venmo-handle')">
+                        <div class="icon">💚</div>
+                        <div class="name">Venmo</div>
+                        <div class="handle" id="venmo-handle">@YourVenmo</div>
+                    </div>
+                </div>
+                
+                <form method="POST" action="/delivery/{{ token }}/confirm-payment" onsubmit="return confirmPayment(event)">
+                    <select name="payment_method" id="payment_method" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                        <option value="">Select payment method used...</option>
+                        <option value="zelle">💵 Zelle</option>
+                        <option value="paypal">💳 PayPal</option>
+                        <option value="cashapp">📱 Cash App</option>
+                        <option value="venmo">💚 Venmo</option>
+                        <option value="other">💰 Other</option>
+                    </select>
+                    <button type="submit" class="paid-btn">✅ I've Sent Payment</button>
+                </form>
+                
+                <p style="margin-top: 15px; font-size: 12px; color: #856404; text-align: center;">
+                    Click after sending payment. The engineer will verify and confirm.
+                </p>
+            {% endif %}
+        </div>
+        
+        <div class="footer">
+            Delivery ID: #{{ delivery_id }}<br>
+            Questions? Contact your audio engineer.
+        </div>
+        
+        {% endif %}
+    </div>
+    
+    <script>
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const original = element.textContent;
+                element.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    element.textContent = original;
+                }, 2000);
+            });
+        }
+        
+        function confirmPayment(event) {
+            const method = document.getElementById('payment_method').value;
+            if (!method) {
+                alert('Please select which payment method you used.');
+                event.preventDefault();
+                return false;
+            }
+            return confirm('Confirm you have sent the payment via ' + method + '?');
+        }
+    </script>
+</body>
+</html>

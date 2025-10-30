@@ -5,6 +5,9 @@ python-multipart==0.0.9
 pydantic==2.9.2
 python-dotenv==1.2.1
 
+# File watching
+watchdog==4.0.2
+
 # Messaging services (optional - comment out if not using)
 sendgrid==6.11.0
 twilio==9.3.7
