@@ -14,10 +14,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       
-      - name: Deploy to Railway
+      - name: Validate Deployment
         run: |
-          # Railway will auto-deploy from GitHub
-          # This workflow just validates the push succeeded
-          echo "✅ Code pushed to GitHub"
+          echo "✅ Code pushed to GitHub successfully"
           echo "🚂 Railway will auto-deploy from connected GitHub repo"
           echo "📊 Check deployment at: https://railway.app/dashboard"
+          echo ""
+          echo "ℹ️  Railway automatically deploys when you:"
+          echo "   1. Connect your GitHub repo in Railway dashboard"
+          echo "   2. Push to main branch (this trigger)"
+          echo ""
+          echo "🔗 Setup Railway: https://railway.app/new"
