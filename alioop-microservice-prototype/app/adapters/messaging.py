@@ -17,11 +17,47 @@ class MessagingAdapter:
             from sendgrid import SendGridAPIClient
             from sendgrid.helpers.mail import Mail
             
+            # Create HTML email with payment character and branding
+            html_body = f'''
+            <html>
+            <head>
+                <style>
+                    body {{ font-family: 'Space Grotesk', Arial, sans-serif; background: #fcf5eb; padding: 20px; margin: 0; }}
+                    .container {{ max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; padding: 40px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }}
+                    .payment-character {{ text-align: center; margin-bottom: 20px; }}
+                    .payment-character img {{ max-width: 200px; height: auto; border-radius: 8px; }}
+                    .header {{ background: #161614; color: white; padding: 30px; border-radius: 8px; text-align: center; margin-bottom: 30px; }}
+                    .content {{ color: #333; line-height: 1.6; }}
+                    .button {{ display: inline-block; background: linear-gradient(135deg, #f05709 0%, #d94d08 100%); color: white; padding: 15px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; margin: 20px 0; }}
+                    .footer {{ text-align: center; color: #71706e; font-size: 14px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0; }}
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="payment-character">
+                        <img src="https://raw.githubusercontent.com/trentbecknell/audomte/main/alioop-microservice-prototype/static/payment-character.png" alt="Payment Character" />
+                    </div>
+                    <div class="header">
+                        <h1 style="margin: 0;">🎵 Alioop Audio Delivery</h1>
+                        <p style="margin: 10px 0 0 0; opacity: 0.9;">Professional Audio File Delivery</p>
+                    </div>
+                    <div class="content">
+                        {body.replace(chr(10), '<br>')}
+                    </div>
+                    <div class="footer">
+                        <p><strong>Alioop Audio Delivery</strong></p>
+                        <p>Professional audio file delivery and payment system</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+            '''
+            
             message = Mail(
                 from_email=self.sendgrid_from,
                 to_emails=to_email,
                 subject=subject,
-                plain_text_content=body
+                html_content=html_body
             )
             
             sg = SendGridAPIClient(self.sendgrid_key)
