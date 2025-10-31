@@ -21,7 +21,7 @@ jobs:
       
       - name: Install JUCE
         run: |
-          git clone --depth 1 --branch 7.0.13 https://github.com/juce-framework/JUCE.git
+          git clone --depth 1 --branch 7.0.12 https://github.com/juce-framework/JUCE.git
           echo "JUCE_PATH=${{ github.workspace }}/JUCE" >> $GITHUB_ENV
       
       - name: Configure CMake
@@ -116,7 +116,7 @@ jobs:
       - name: Install JUCE
         shell: bash
         run: |
-          git clone --depth 1 --branch 7.0.13 https://github.com/juce-framework/JUCE.git
+          git clone --depth 1 --branch 7.0.12 https://github.com/juce-framework/JUCE.git
           echo "JUCE_PATH=${{ github.workspace }}/JUCE" >> $GITHUB_ENV
       
       - name: Configure CMake
@@ -215,7 +215,7 @@ jobs:
       
       - name: Install JUCE
         run: |
-          git clone --depth 1 --branch 7.0.13 https://github.com/juce-framework/JUCE.git
+          git clone --depth 1 --branch 7.0.12 https://github.com/juce-framework/JUCE.git
           echo "JUCE_PATH=${{ github.workspace }}/JUCE" >> $GITHUB_ENV
       
       - name: Configure CMake
