@@ -1,0 +1,152 @@
+╔══════════════════════════════════════════════════════════════════╗
+║                  ALIOOP SEND - MANUAL INSTALLATION               ║
+╚══════════════════════════════════════════════════════════════════╝
+
+Welcome! This is a simple drag-and-drop installation.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📦 WHAT'S INCLUDED:
+
+• VST3/AlioopSend.vst3    - VST3 plugin (for most DAWs)
+• AU/AlioopSend.component - AU plugin (for Logic Pro, GarageBand)
+• This installation guide
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🍎 macOS INSTALLATION:
+
+OPTION 1: Drag & Drop (Easiest)
+-------------------------------
+1. Open this folder in Finder
+2. Open a NEW Finder window
+3. Go → Go to Folder... (Cmd+Shift+G)
+4. Type: /Library/Audio/Plug-Ins/
+5. Drag "AlioopSend.vst3" to the VST3 folder
+6. Drag "AlioopSend.component" to the Components folder
+7. Done! Close windows and open your DAW
+
+OPTION 2: Terminal (If you prefer)
+-----------------------------------
+Open Terminal and run:
+
+sudo cp -R VST3/AlioopSend.vst3 /Library/Audio/Plug-Ins/VST3/
+sudo cp -R AU/AlioopSend.component /Library/Audio/Plug-Ins/Components/
+
+Enter your password when prompted.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🪟 WINDOWS INSTALLATION:
+
+1. Open this folder
+2. Copy "AlioopSend.vst3" folder
+3. Go to: C:\Program Files\Common Files\VST3\
+   (You may need administrator permission)
+4. Paste the folder there
+5. Done! Open your DAW
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎹 REAPER SETUP:
+
+After copying the files:
+
+1. Open Reaper
+2. Options → Preferences (or Cmd+, on Mac)
+3. Click "Plug-ins" → "VST"
+4. Click "Re-scan"
+5. Wait for scan to complete
+6. Click "OK"
+7. Close Preferences
+
+Finding the Plugin:
+-------------------
+1. Select your Master track (or any track)
+2. Click "FX" button
+3. Type "Alioop" in the search box
+4. Double-click "VST3: Alioop Send (Alioop)"
+5. Plugin opens! 🎉
+
+Alternative Method:
+------------------
+1. Right-click track FX button
+2. Browse → VST3 → Alioop → AlioopSend
+3. Click to insert
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎛️ OTHER DAWs:
+
+Pro Tools:
+  Insert → Other → VST3 → Alioop Send
+
+Logic Pro:
+  Insert → Audio FX → Audio Units → Alioop → Alioop Send
+
+Ableton Live:
+  Audio Effects → VST3 → Alioop → Alioop Send
+
+Studio One:
+  Effects → VST3 → Alioop → Alioop Send
+
+Cubase/Nuendo:
+  Inserts → VST3 → Alioop → Alioop Send
+
+FL Studio:
+  Mixer → Insert → More → VST3 → Alioop Send
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🚀 QUICK START:
+
+1. Insert plugin on Master track
+2. Click "Start Recording" button
+3. Play your session from start to finish
+4. Click "Stop Recording"
+5. Fill in client details:
+   • Client Name
+   • Email
+   • Phone (optional)
+   • Price
+   • Service Name
+6. Click "Send Delivery"
+7. Done! Client gets email instantly
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❓ TROUBLESHOOTING:
+
+Plugin doesn't appear in DAW?
+• Make sure you copied to the correct folder
+• Rescan plugins in your DAW settings
+• Restart your DAW completely
+• Check both VST3 and AU (Mac) folders
+
+Reaper can't find it?
+• Check VST paths: Preferences → Plug-ins → VST
+• Make sure /Library/Audio/Plug-Ins/VST3 is in the list
+• Click "Re-scan" and wait for completion
+• Try clearing cache first: "Clear cache/re-scan"
+
+Permission denied (Mac)?
+• Use "sudo" in terminal commands
+• Or drag to folders with administrator account
+
+Mac says "cannot be opened"?
+• Right-click plugin → Open
+• Or: System Settings → Security → Allow
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📚 MORE HELP:
+
+• Documentation: https://github.com/trentbecknell/audomte/tree/main/alioop-plugin
+• Issues: https://github.com/trentbecknell/audomte/issues
+• Web App: https://web-production-5748a.up.railway.app/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Enjoy using Alioop! 🎵
+
+Built with ❤️ for audio professionals
