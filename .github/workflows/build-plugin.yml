@@ -41,19 +41,35 @@ jobs:
       - name: Package Artifacts
         run: |
           mkdir -p package/VST3 package/AU package/Standalone
-          
-          # Copy VST3
-          cp -r alioop-plugin/build/AlioopSend_artefacts/Release/VST3/AlioopSend.vst3 \
-            package/VST3/
-          
-          # Copy AU
-          cp -r alioop-plugin/build/AlioopSend_artefacts/Release/AU/AlioopSend.component \
-            package/AU/
-          
-          # Copy Standalone (if built)
-          if [ -d "alioop-plugin/build/AlioopSend_artefacts/Release/Standalone" ]; then
-            cp -r alioop-plugin/build/AlioopSend_artefacts/Release/Standalone/AlioopSend.app \
-              package/Standalone/
+
+          # Copy any produced VST3 folder (handles spaces / different names)
+          VST3_BUILD_DIR="alioop-plugin/build/AlioopSend_artefacts/Release/VST3"
+          if [ -d "$VST3_BUILD_DIR" ]; then
+            shopt -s nullglob
+            for vst in "$VST3_BUILD_DIR"/*.vst3; do
+              cp -r "$vst" package/VST3/
+            done
+            shopt -u nullglob
+          fi
+
+          # Copy any produced AU component
+          AU_BUILD_DIR="alioop-plugin/build/AlioopSend_artefacts/Release/AU"
+          if [ -d "$AU_BUILD_DIR" ]; then
+            shopt -s nullglob
+            for comp in "$AU_BUILD_DIR"/*.component; do
+              cp -r "$comp" package/AU/
+            done
+            shopt -u nullglob
+          fi
+
+          # Copy Standalone (if built) using glob to handle naming
+          STANDALONE_DIR="alioop-plugin/build/AlioopSend_artefacts/Release/Standalone"
+          if [ -d "$STANDALONE_DIR" ]; then
+            shopt -s nullglob
+            for app in "$STANDALONE_DIR"/*; do
+              cp -r "$app" package/Standalone/
+            done
+            shopt -u nullglob
           fi
           
           # Add installation instructions
@@ -137,11 +153,17 @@ jobs:
         shell: bash
         run: |
           mkdir -p package/VST3
-          
-          # Copy VST3
-          cp -r alioop-plugin/build/AlioopSend_artefacts/Release/VST3/AlioopSend.vst3 \
-            package/VST3/
-          
+
+          # Copy any produced VST3 folder (handles spaces / different names)
+          VST3_BUILD_DIR="alioop-plugin/build/AlioopSend_artefacts/Release/VST3"
+          if [ -d "$VST3_BUILD_DIR" ]; then
+            shopt -s nullglob
+            for vst in "$VST3_BUILD_DIR"/*.vst3; do
+              cp -r "$vst" package/VST3/
+            done
+            shopt -u nullglob
+          fi
+
           # Add installation instructions
           cat > package/INSTALL_WINDOWS.txt << 'EOF'
           ALIOOP SEND - Windows Installation
@@ -233,11 +255,16 @@ jobs:
       - name: Package Artifacts
         run: |
           mkdir -p package/VST3
-          
-          # Copy VST3
-          cp -r alioop-plugin/build/AlioopSend_artefacts/Release/VST3/AlioopSend.vst3 \
-            package/VST3/
-          
+
+          # Copy any produced VST3 folder (handles spaces / different names)
+          VST3_BUILD_DIR="alioop-plugin/build/AlioopSend_artefacts/Release/VST3"
+          if [ -d "$VST3_BUILD_DIR" ]; then
+            for vst in "$VST3_BUILD_DIR"/*.vst3; do
+              [ -e "$vst" ] || continue
+              cp -r "$vst" package/VST3/
+            done
+          fi
+
           # Add installation instructions
           cat > package/INSTALL_LINUX.txt << 'EOF'
           ALIOOP SEND - Linux Installation
