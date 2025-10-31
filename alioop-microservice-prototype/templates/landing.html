@@ -349,7 +349,7 @@
             <!-- Upload Tab -->
             <div id="upload-tab" class="tab-content active">
                 <div class="alert alert-info" id="upload-info">
-                    <strong>Quick Upload:</strong> Drop your finished audio file below to create a delivery for your client.
+                    <strong>⚡ Quick Delivery:</strong> Drop your audio, enter client details, and send in seconds!
                 </div>
                 
                 <div class="alert alert-success" id="upload-success">
@@ -367,28 +367,45 @@
                     <p style="margin-top: 10px; font-size: 12px; color: #999;">
                         Supported: WAV, MP3, FLAC, AIFF, M4A, OGG, AAC, WMA
                     </p>
-                    <input type="file" id="fileInput" class="file-input" accept=".wav,.mp3,.flac,.aiff,.m4a,.ogg,.aac,.wma" multiple>
+                    <input type="file" id="fileInput" class="file-input" accept=".wav,.mp3,.flac,.aiff,.m4a,.ogg,.aac,.wma">
                 </div>
                 
                 <div class="file-list" id="fileList"></div>
                 
-                <div class="form-group">
-                    <label for="clientSelect">Select Client</label>
-                    <select id="clientSelect">
-                        <option value="">Loading clients...</option>
-                    </select>
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; margin: 20px 0;">
+                    <h3 style="margin-bottom: 15px; color: #333; font-size: 18px;">📋 Client Information</h3>
+                    
+                    <div class="form-group">
+                        <label for="clientName">Client Name *</label>
+                        <input type="text" id="clientName" placeholder="e.g., John Smith" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="clientEmail">Email Address *</label>
+                        <input type="email" id="clientEmail" placeholder="e.g., john@example.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="clientPhone">Phone Number (optional)</label>
+                        <input type="tel" id="clientPhone" placeholder="e.g., +1 234 567 8900">
+                        <small style="color: #71706e; font-size: 12px;">Include country code for SMS notifications</small>
+                    </div>
                 </div>
                 
-                <div class="form-group">
-                    <label for="serviceSelect">Select Service</label>
-                    <select id="serviceSelect">
-                        <option value="">Loading services...</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="customPrice">Custom Price (optional)</label>
-                    <input type="number" id="customPrice" placeholder="Leave blank to use default price" step="0.01" min="0">
+                <div style="background: #fcf5eb; padding: 20px; border-radius: 12px; margin: 20px 0; border-left: 4px solid #f05709;">
+                    <h3 style="margin-bottom: 15px; color: #333; font-size: 18px;">💰 Pricing</h3>
+                    
+                    <div class="form-group">
+                        <label for="deliveryPrice">Price *</label>
+                        <input type="number" id="deliveryPrice" placeholder="e.g., 50.00" step="0.01" min="0" required>
+                        <small style="color: #71706e; font-size: 12px;">Amount client will pay to download</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="serviceName">Service/Project Name (optional)</label>
+                        <input type="text" id="serviceName" placeholder="e.g., Mixing, Mastering, Full Production">
+                        <small style="color: #71706e; font-size: 12px;">Appears in email notification</small>
+                    </div>
                 </div>
                 
                 <div class="progress" id="uploadProgress">
@@ -396,8 +413,12 @@
                 </div>
                 
                 <button class="btn btn-primary" id="uploadBtn" onclick="processDelivery()" disabled>
-                    📤 Create Delivery & Notify Client
+                    📤 Send File & Request Payment
                 </button>
+                
+                <p style="text-align: center; margin-top: 15px; color: #71706e; font-size: 13px;">
+                    Client will receive an email with download link and payment request
+                </p>
             </div>
             
             <!-- Login Tab -->
@@ -502,15 +523,24 @@
     
     <script>
         let selectedFiles = [];
-        let clients = [];
-        let services = [];
         
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            loadClients();
-            loadServices();
             setupDragAndDrop();
+            setupFormListeners();
         });
+        
+        // Setup form field listeners
+        function setupFormListeners() {
+            const fields = ['clientName', 'clientEmail', 'clientPhone', 'deliveryPrice', 'serviceName'];
+            fields.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.addEventListener('input', updateUploadButton);
+                    element.addEventListener('change', updateUploadButton);
+                }
+            });
+        };
         
         // Tab switching
         function switchTab(tabName) {
@@ -592,10 +622,12 @@
         
         function updateUploadButton() {
             const btn = document.getElementById('uploadBtn');
-            const clientSelect = document.getElementById('clientSelect');
-            const serviceSelect = document.getElementById('serviceSelect');
+            const hasFile = selectedFiles.length > 0;
+            const hasName = document.getElementById('clientName').value.trim() !== '';
+            const hasEmail = document.getElementById('clientEmail').value.trim() !== '';
+            const hasPrice = document.getElementById('deliveryPrice').value.trim() !== '';
             
-            btn.disabled = !(selectedFiles.length > 0 && clientSelect.value && serviceSelect.value);
+            btn.disabled = !(hasFile && hasName && hasEmail && hasPrice);
         }
         
         function formatFileSize(bytes) {
@@ -606,124 +638,86 @@
             return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
         }
         
-        // Load clients from API
-        async function loadClients() {
-            try {
-                const response = await fetch('/api/clients');
-                const data = await response.json();
-                clients = data.clients || [];
-                
-                const select = document.getElementById('clientSelect');
-                select.innerHTML = '<option value="">-- Select Client --</option>';
-                clients.forEach(client => {
-                    const option = document.createElement('option');
-                    option.value = client.id;
-                    option.textContent = `${client.name} (${client.email || client.phone || 'No contact'})`;
-                    select.appendChild(option);
-                });
-                
-                select.addEventListener('change', updateUploadButton);
-            } catch (error) {
-                console.error('Error loading clients:', error);
-                // Fallback for demo
-                const select = document.getElementById('clientSelect');
-                select.innerHTML = '<option value="1">Demo Client (demo@example.com)</option>';
-            }
-        }
-        
-        // Load services from API
-        async function loadServices() {
-            try {
-                const response = await fetch('/services');
-                const data = await response.json();
-                services = data.services || [];
-                
-                const select = document.getElementById('serviceSelect');
-                select.innerHTML = '<option value="">-- Select Service --</option>';
-                services.forEach(service => {
-                    const option = document.createElement('option');
-                    option.value = service.id;
-                    option.dataset.price = service.default_price;
-                    const price = service.default_price > 0 ? `$${service.default_price}` : 'Custom';
-                    option.textContent = `${service.name} - ${price}`;
-                    select.appendChild(option);
-                });
-                
-                select.addEventListener('change', updateUploadButton);
-            } catch (error) {
-                console.error('Error loading services:', error);
-                // Fallback for demo
-                const select = document.getElementById('serviceSelect');
-                select.innerHTML = `
-                    <option value="1" data-price="150">Mixing - $150</option>
-                    <option value="2" data-price="100">Mastering - $100</option>
-                    <option value="3" data-price="500">Production - $500</option>
-                `;
-            }
-        }
-        
         // Process delivery
         async function processDelivery() {
             if (selectedFiles.length === 0) {
-                showAlert('error', 'Please select at least one file');
+                showAlert('error', 'Please select a file');
                 return;
             }
             
-            const clientId = document.getElementById('clientSelect').value;
-            const serviceId = document.getElementById('serviceSelect').value;
-            const customPrice = document.getElementById('customPrice').value;
+            // Get inline form values
+            const clientName = document.getElementById('clientName').value.trim();
+            const clientEmail = document.getElementById('clientEmail').value.trim();
+            const clientPhone = document.getElementById('clientPhone').value.trim();
+            const price = document.getElementById('deliveryPrice').value;
+            const serviceName = document.getElementById('serviceName').value.trim() || 'Audio Delivery';
             
-            if (!clientId || !serviceId) {
-                showAlert('error', 'Please select client and service');
+            // Validate required fields
+            if (!clientName || !clientEmail || !price) {
+                showAlert('error', 'Please fill in all required fields (name, email, price)');
+                return;
+            }
+            
+            // Basic email validation
+            if (!clientEmail.includes('@')) {
+                showAlert('error', 'Please enter a valid email address');
                 return;
             }
             
             const btn = document.getElementById('uploadBtn');
             btn.disabled = true;
-            btn.textContent = '⏳ Processing...';
+            btn.textContent = '⏳ Sending...';
             
             const progressBar = document.getElementById('uploadProgress');
             progressBar.style.display = 'block';
             
             try {
-                for (let i = 0; i < selectedFiles.length; i++) {
-                    const file = selectedFiles[i];
-                    const formData = new FormData();
-                    formData.append('file', file);
-                    formData.append('client_id', clientId);
-                    formData.append('service_id', serviceId);
-                    if (customPrice) {
-                        formData.append('custom_price', customPrice);
-                    }
-                    
-                    const progress = ((i + 1) / selectedFiles.length) * 100;
-                    document.getElementById('progressBar').style.width = progress + '%';
-                    
-                    const response = await fetch('/api/upload-delivery', {
-                        method: 'POST',
-                        body: formData
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error('Upload failed');
-                    }
+                const file = selectedFiles[0]; // Single file for now
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('client_name', clientName);
+                formData.append('client_email', clientEmail);
+                if (clientPhone) {
+                    formData.append('client_phone', clientPhone);
+                }
+                formData.append('price', price);
+                formData.append('service_name', serviceName);
+                
+                document.getElementById('progressBar').style.width = '50%';
+                
+                const response = await fetch('/api/upload-delivery', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                document.getElementById('progressBar').style.width = '100%';
+                
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(result.detail || 'Upload failed');
                 }
                 
-                showAlert('success', `Successfully created ${selectedFiles.length} delivery(ies)! Client has been notified.`);
+                showAlert('success', `✅ File sent to ${clientName}! They've been notified at ${clientEmail}`);
                 
                 // Reset form
                 selectedFiles = [];
                 updateFileList();
                 document.getElementById('fileInput').value = '';
-                document.getElementById('customPrice').value = '';
+                document.getElementById('clientName').value = '';
+                document.getElementById('clientEmail').value = '';
+                document.getElementById('clientPhone').value = '';
+                document.getElementById('deliveryPrice').value = '';
+                document.getElementById('serviceName').value = '';
                 document.getElementById('progressBar').style.width = '0%';
                 progressBar.style.display = 'none';
                 
             } catch (error) {
-                showAlert('error', 'Failed to create delivery: ' + error.message);
+                showAlert('error', 'Failed: ' + error.message);
+                document.getElementById('progressBar').style.width = '0%';
             } finally {
                 btn.disabled = false;
-                btn.textContent = '📤 Create Delivery & Notify Client';
+                btn.textContent = '📤 Send File & Request Payment';
             }
         }
         

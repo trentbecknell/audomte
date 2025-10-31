@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+import os
 load_dotenv()  # Load environment variables from .env file
 
 from fastapi import FastAPI, Request, UploadFile, File, Form, HTTPException
@@ -21,6 +22,9 @@ app = FastAPI(title="Alioop Comms + Preferences Microservice")
 
 # Get the base directory (parent of app folder)
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Get base URL from environment or use default
+BASE_URL = os.getenv("BASE_URL", "https://web-production-5748a.up.railway.app")
 
 app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")), name="static")
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
@@ -493,12 +497,14 @@ def api_list_clients():
 @app.post("/api/upload-delivery")
 async def api_upload_delivery(
     file: UploadFile = File(...),
-    client_id: int = Form(...),
-    service_id: int = Form(...),
-    custom_price: float = Form(None),
+    client_name: str = Form(...),
+    client_email: str = Form(...),
+    client_phone: str = Form(None),
+    price: float = Form(...),
+    service_name: str = Form("Audio Delivery"),
     project_id: int = Form(None)
 ):
-    """Web-based file upload for creating deliveries."""
+    """Streamlined file upload - auto-creates client if needed."""
     
     # Validate file type
     valid_extensions = {'.wav', '.mp3', '.flac', '.aiff', '.m4a', '.ogg', '.aac', '.wma'}
@@ -507,24 +513,52 @@ async def api_upload_delivery(
     if file_ext not in valid_extensions:
         raise HTTPException(status_code=400, detail="Invalid file type")
     
-    # Get client and service info
     conn = get_conn()
     cur = conn.cursor()
     
-    cur.execute("SELECT * FROM clients WHERE id = ?", (client_id,))
+    # Check if client exists by email
+    cur.execute("SELECT * FROM clients WHERE email = ?", (client_email,))
     client = cur.fetchone()
+    
     if not client:
-        conn.close()
-        raise HTTPException(status_code=404, detail="Client not found")
+        # Auto-create new client
+        cur.execute('''
+            INSERT INTO clients (name, email, phone, created_at)
+            VALUES (?, ?, ?, ?)
+        ''', (client_name, client_email, client_phone, datetime.now()))
+        client_id = cur.lastrowid
+        conn.commit()
+        
+        # Fetch the newly created client
+        cur.execute("SELECT * FROM clients WHERE id = ?", (client_id,))
+        client = cur.fetchone()
+    else:
+        client_id = client['id']
+        # Update client info if changed
+        cur.execute('''
+            UPDATE clients 
+            SET name = ?, phone = COALESCE(?, phone)
+            WHERE id = ?
+        ''', (client_name, client_phone, client_id))
+        conn.commit()
+        # Refresh client data
+        cur.execute("SELECT * FROM clients WHERE id = ?", (client_id,))
+        client = cur.fetchone()
     
-    cur.execute("SELECT * FROM services WHERE id = ?", (service_id,))
+    # Check if service exists by name, or create default
+    cur.execute("SELECT * FROM services WHERE name = ?", (service_name,))
     service = cur.fetchone()
-    if not service:
-        conn.close()
-        raise HTTPException(status_code=404, detail="Service not found")
     
-    # Determine price
-    price = custom_price if custom_price is not None else service['default_price']
+    if not service:
+        # Create a basic service entry
+        cur.execute('''
+            INSERT INTO services (name, description, default_price, created_at)
+            VALUES (?, ?, ?, ?)
+        ''', (service_name, f"Custom service: {service_name}", price, datetime.now()))
+        service_id = cur.lastrowid
+        conn.commit()
+    else:
+        service_id = service['id']
     
     # Generate secure token
     download_token = secrets.token_urlsafe(32)
@@ -567,14 +601,14 @@ async def api_upload_delivery(
     # Send notification to customer
     messaging = MessagingAdapter()
     
-    download_url = f"http://localhost:8000/delivery/{download_token}"
+    download_url = f"{BASE_URL}/delivery/{download_token}"
     
     # Email notification
     if client['email']:
-        email_subject = f"Your {service['name']} is Ready!"
+        email_subject = f"Your {service_name} is Ready!"
         email_body = f"""Hi {client['name']},
 
-Your <strong>{service['name']}</strong> for <strong>{file.filename}</strong> is complete!
+Your <strong>{service_name}</strong> for <strong>{file.filename}</strong> is complete!
 
 <h3>📥 Download Your File</h3>
 <p><a href="{download_url}" style="display: inline-block; background: linear-gradient(135deg, #f05709 0%, #d94d08 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold;">DOWNLOAD NOW</a></p>
@@ -590,7 +624,7 @@ Your <strong>{service['name']}</strong> for <strong>{file.filename}</strong> is 
     
     # SMS notification
     if client['phone']:
-        sms_body = f"🎵 Your {service['name']} is ready! Download: {download_url} | Payment: ${price:.2f}"
+        sms_body = f"🎵 Your {service_name} is ready! Download: {download_url} | Payment: ${price:.2f}"
         try:
             messaging.send_sms(client['phone'], sms_body)
             print(f"✅ SMS sent to {client['phone']}")
