@@ -435,15 +435,31 @@
                 <h2 style="margin-bottom: 20px; color: #333;">How It Works</h2>
                 
                 <div style="margin-bottom: 30px;">
-                    <h3 style="color: #667eea; margin-bottom: 15px;">🎛️ For Engineers</h3>
+                    <h3 style="color: #f05709; margin-bottom: 15px;">🎛️ For Engineers</h3>
                     <ol style="line-height: 2; color: #666;">
-                        <li>Upload your finished audio file</li>
-                        <li>Select the client and service type</li>
-                        <li>Client receives instant notification via email/SMS</li>
-                        <li>Secure download link with payment options</li>
-                        <li>Get notified when client pays</li>
-                        <li>Verify payment and done!</li>
+                        <li>Upload your finished audio file (or call from DAW!)</li>
+                        <li>Enter client details and price</li>
+                        <li>Client receives instant notification via email</li>
+                        <li>Secure download link with payment instructions</li>
+                        <li>Client downloads and pays</li>
+                        <li>You're done - get paid!</li>
                     </ol>
+                </div>
+                
+                <div style="margin-bottom: 30px; background: linear-gradient(135deg, #fcf5eb 0%, #fff9f0 100%); padding: 25px; border-radius: 12px; border-left: 4px solid #f05709;">
+                    <h3 style="color: #f05709; margin-bottom: 15px;">⚡ DAW Integration</h3>
+                    <p style="color: #666; margin-bottom: 15px;">
+                        <strong>Work faster!</strong> Call Alioop directly from your DAW with keyboard shortcuts.
+                    </p>
+                    <ul class="feature-list" style="margin-bottom: 15px;">
+                        <li>Hit Cmd+Shift+A in Pro Tools, Logic, Ableton</li>
+                        <li>Auto-fills client info from filename</li>
+                        <li>One-click send after bounce</li>
+                        <li>No app switching required</li>
+                    </ul>
+                    <p style="color: #999; font-size: 14px;">
+                        📖 <a href="https://github.com/trentbecknell/audomte/blob/main/DAW_INTEGRATION.md" target="_blank" style="color: #f05709; text-decoration: none; font-weight: 600;">View DAW Setup Guide →</a>
+                    </p>
                 </div>
                 
                 <div style="margin-bottom: 30px;">
@@ -501,7 +517,48 @@
         document.addEventListener('DOMContentLoaded', function() {
             setupDragAndDrop();
             setupFormListeners();
+            parseURLParameters();
         });
+        
+        // Parse URL parameters for DAW integration
+        function parseURLParameters() {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // Check for file parameter (from URL handler)
+            const fileParam = urlParams.get('file');
+            const clientParam = urlParams.get('client');
+            const priceParam = urlParams.get('price');
+            const emailParam = urlParams.get('email');
+            const serviceParam = urlParams.get('service');
+            
+            // Pre-fill form if parameters exist
+            if (clientParam) {
+                document.getElementById('clientName').value = decodeURIComponent(clientParam);
+            }
+            if (emailParam) {
+                document.getElementById('clientEmail').value = decodeURIComponent(emailParam);
+            }
+            if (priceParam) {
+                document.getElementById('deliveryPrice').value = priceParam;
+            }
+            if (serviceParam) {
+                document.getElementById('serviceName').value = decodeURIComponent(serviceParam);
+            }
+            
+            // Show helpful message if called from DAW
+            if (fileParam) {
+                const filename = decodeURIComponent(fileParam).split('/').pop();
+                showAlert('success', `🎵 Ready to send: ${filename}<br>Fill in client details below and click Send!`);
+                
+                // Try to parse client name from filename (e.g., "ClientName_ProjectName.wav")
+                const parts = filename.replace(/\.[^/.]+$/, '').split('_');
+                if (parts.length > 0 && !clientParam) {
+                    document.getElementById('clientName').value = parts[0].replace(/[-_]/g, ' ');
+                }
+            }
+            
+            updateUploadButton();
+        };
         
         // Setup form field listeners
         function setupFormListeners() {

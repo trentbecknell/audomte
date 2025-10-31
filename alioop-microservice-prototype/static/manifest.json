@@ -57,5 +57,11 @@
         }
       ]
     }
-  }
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+alioop",
+      "url": "/?action=upload&file=%s"
+    }
+  ]
 }
