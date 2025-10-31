@@ -1,0 +1,61 @@
+{
+  "name": "Alioop Audio Delivery",
+  "short_name": "Alioop",
+  "description": "Professional audio file delivery and payment system for audio engineers",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#161614",
+  "theme_color": "#f05709",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/static/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "music", "business"],
+  "screenshots": [
+    {
+      "src": "/static/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/static/screenshot-narrow.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Upload Delivery",
+      "short_name": "Upload",
+      "description": "Quick upload audio file for delivery",
+      "url": "/?tab=upload",
+      "icons": [{ "src": "/static/icon-upload-96.png", "sizes": "96x96" }]
+    }
+  ],
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "files": [
+        {
+          "name": "audio",
+          "accept": ["audio/*", ".wav", ".mp3", ".flac"]
+        }
+      ]
+    }
+  }
+}

@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Audio Delivery Portal - Engineer Login</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="Professional audio file delivery and payment system for audio engineers">
+    <meta name="theme-color" content="#f05709">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Alioop">
+    <link rel="manifest" href="/static/manifest.json">
+    <link rel="apple-touch-icon" href="/static/icon-192.png">
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -342,7 +352,6 @@
         <div class="content">
             <div class="tabs">
                 <button class="tab active" onclick="switchTab('upload')">📤 Upload Delivery</button>
-                <button class="tab" onclick="switchTab('login')">🔐 Engineer Login</button>
                 <button class="tab" onclick="switchTab('about')">ℹ️ About</button>
             </div>
             
@@ -419,42 +428,6 @@
                 <p style="text-align: center; margin-top: 15px; color: #71706e; font-size: 13px;">
                     Client will receive an email with download link and payment request
                 </p>
-            </div>
-            
-            <!-- Login Tab -->
-            <div id="login-tab" class="tab-content">
-                <div class="login-form">
-                    <h2 style="text-align: center; margin-bottom: 30px; color: #333;">Engineer Dashboard</h2>
-                    
-                    <div class="alert alert-info" style="display: block;">
-                        <strong>Access your dashboard to:</strong>
-                        <ul class="feature-list">
-                            <li>Manage clients and projects</li>
-                            <li>View all deliveries</li>
-                            <li>Verify payments</li>
-                            <li>Update pricing</li>
-                            <li>Track revenue</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="username">Username or Email</label>
-                        <input type="text" id="username" placeholder="Enter your username">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" placeholder="Enter your password">
-                    </div>
-                    
-                    <button class="btn btn-primary" onclick="handleLogin()">
-                        🔐 Login to Dashboard
-                    </button>
-                    
-                    <p style="text-align: center; margin-top: 20px; color: #666; font-size: 14px;">
-                        Don't have an account? <a href="#" style="color: #667eea; text-decoration: none;">Contact admin</a>
-                    </p>
-                </div>
             </div>
             
             <!-- About Tab -->
@@ -721,21 +694,6 @@
             }
         }
         
-        // Login handler
-        function handleLogin() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
-            if (!username || !password) {
-                alert('Please enter username and password');
-                return;
-            }
-            
-            // TODO: Implement actual authentication
-            // For now, redirect to main dashboard
-            window.location.href = '/';
-        }
-        
         // Alert system
         function showAlert(type, message) {
             // Hide all alerts first
@@ -752,6 +710,78 @@
                 document.getElementById('upload-error').style.display = 'block';
             }
         }
+        
+        // PWA Installation
+        let deferredPrompt;
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            showInstallPromotion();
+        });
+        
+        function showInstallPromotion() {
+            const installBanner = document.createElement('div');
+            installBanner.id = 'install-banner';
+            installBanner.innerHTML = `
+                <div style="background: linear-gradient(135deg, #f05709 0%, #d94d08 100%); color: white; padding: 15px 20px; border-radius: 12px; margin: 20px 0; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(240, 87, 9, 0.3);">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span style="font-size: 32px;">📱</span>
+                        <div>
+                            <strong style="display: block; font-size: 16px;">Install Alioop App</strong>
+                            <span style="font-size: 13px; opacity: 0.95;">Access faster, work offline, get notifications</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="installPWA()" style="background: white; color: #f05709; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-family: 'Space Grotesk', sans-serif;">
+                            Install
+                        </button>
+                        <button onclick="dismissInstall()" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-family: 'Space Grotesk', sans-serif;">
+                            ✕
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            const container = document.querySelector('.container');
+            container.insertBefore(installBanner, container.firstChild);
+        }
+        
+        async function installPWA() {
+            if (!deferredPrompt) return;
+            
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            
+            console.log(`User response to install prompt: ${outcome}`);
+            deferredPrompt = null;
+            
+            document.getElementById('install-banner')?.remove();
+        }
+        
+        function dismissInstall() {
+            document.getElementById('install-banner')?.remove();
+            localStorage.setItem('install-dismissed', 'true');
+        }
+        
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/static/service-worker.js')
+                    .then((registration) => {
+                        console.log('✅ Service Worker registered:', registration.scope);
+                    })
+                    .catch((error) => {
+                        console.log('❌ Service Worker registration failed:', error);
+                    });
+            });
+        }
+        
+        // App installed event
+        window.addEventListener('appinstalled', () => {
+            console.log('✅ PWA installed successfully!');
+            showAlert('success', '🎉 App installed! You can now access Alioop from your home screen.');
+        });
     </script>
 </body>
 </html>
