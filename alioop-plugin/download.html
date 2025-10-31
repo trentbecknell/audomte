@@ -251,17 +251,42 @@
         </div>
         
         <div class="downloads">
-            <a href="https://github.com/trentbecknell/audomte/releases/latest/download/AlioopSend-macOS-v1.0.0.pkg" class="btn-download">
+            <div class="btn-download" style="cursor: not-allowed; opacity: 0.7; position: relative;">
                 <span class="icon">🍎</span>
                 <span class="platform">Download for Mac</span>
                 <span class="version">macOS 10.13+ • VST3 + AU</span>
-            </a>
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(240, 87, 9, 0.95); padding: 15px; border-radius: 8px; font-size: 0.8em; font-weight: 700;">
+                    🚧 BUILD IN PROGRESS 🚧
+                </div>
+            </div>
             
-            <a href="https://github.com/trentbecknell/audomte/releases/latest/download/AlioopSend-Windows-v1.0.0.exe" class="btn-download">
+            <div class="btn-download" style="cursor: not-allowed; opacity: 0.7; position: relative;">
                 <span class="icon">🪟</span>
                 <span class="platform">Download for Windows</span>
                 <span class="version">Windows 10+ • VST3</span>
-            </a>
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(240, 87, 9, 0.95); padding: 15px; border-radius: 8px; font-size: 0.8em; font-weight: 700;">
+                    🚧 BUILD IN PROGRESS 🚧
+                </div>
+            </div>
+        </div>
+        
+        <div style="background: rgba(240, 87, 9, 0.1); border-left: 4px solid #f05709; padding: 20px; border-radius: 8px; text-align: left; margin-bottom: 2em;">
+            <strong style="color: #f05709; font-size: 1.2em;">🛠️ Plugin Currently Building</strong><br><br>
+            <span style="font-size: 0.95em; opacity: 0.9;">
+                The VST/AU plugin is complete and ready to build! Installers will be available soon.<br><br>
+                
+                <strong>In the meantime, try these alternatives:</strong><br>
+                • <a href="https://web-production-5748a.up.railway.app/" style="color: #f05709;">Web App</a> - Use Alioop in your browser right now<br>
+                • <a href="https://github.com/trentbecknell/audomte/tree/main/alioop-desktop" style="color: #f05709;">Desktop App</a> - Auto-detect bounced files (~15 sec workflow)<br>
+                • <a href="https://github.com/trentbecknell/audomte/tree/main/daw-export-scripts" style="color: #f05709;">Export Scripts</a> - Keyboard shortcuts for your DAW<br><br>
+                
+                <strong>Want to build the plugin yourself?</strong><br>
+                1. Clone: <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px;">git clone https://github.com/trentbecknell/audomte.git</code><br>
+                2. Install: <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px;">brew install juce cmake</code><br>
+                3. Build: <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px;">cd alioop-plugin && ./build-all.sh</code><br><br>
+                
+                <strong>Check back soon for one-click installers! 🚀</strong>
+            </span>
         </div>
         
         <div class="requirements">
