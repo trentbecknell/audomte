@@ -1,0 +1,387 @@
+name: Build Alioop Plugin
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'alioop-plugin/**'
+      - '.github/workflows/build-plugin.yml'
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-macos:
+    name: Build macOS (VST3 + AU)
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      
+      - name: Install JUCE
+        run: |
+          git clone --depth 1 --branch 7.0.12 https://github.com/juce-framework/JUCE.git
+          echo "JUCE_PATH=${{ github.workspace }}/JUCE" >> $GITHUB_ENV
+      
+      - name: Configure CMake
+        working-directory: alioop-plugin
+        run: |
+          mkdir build
+          cd build
+          cmake .. \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DJUCE_PATH=${{ env.JUCE_PATH }}
+      
+      - name: Build Plugin
+        working-directory: alioop-plugin/build
+        run: cmake --build . --config Release --parallel
+      
+      - name: Package Artifacts
+        run: |
+          mkdir -p package/VST3 package/AU package/Standalone
+          
+          # Copy VST3
+          cp -r alioop-plugin/build/AlioopSend_artefacts/Release/VST3/AlioopSend.vst3 \
+            package/VST3/
+          
+          # Copy AU
+          cp -r alioop-plugin/build/AlioopSend_artefacts/Release/AU/AlioopSend.component \
+            package/AU/
+          
+          # Copy Standalone (if built)
+          if [ -d "alioop-plugin/build/AlioopSend_artefacts/Release/Standalone" ]; then
+            cp -r alioop-plugin/build/AlioopSend_artefacts/Release/Standalone/AlioopSend.app \
+              package/Standalone/
+          fi
+          
+          # Add installation instructions
+          cat > package/INSTALL_MAC.txt << 'EOF'
+          ALIOOP SEND - macOS Installation
+          ==================================
+          
+          VST3 Installation:
+          ------------------
+          Copy the entire AlioopSend.vst3 folder to:
+            ~/Library/Audio/Plug-Ins/VST3/
+          
+          Terminal command:
+            cp -r VST3/AlioopSend.vst3 ~/Library/Audio/Plug-Ins/VST3/
+          
+          Audio Unit (AU) Installation:
+          -----------------------------
+          Copy the entire AlioopSend.component folder to:
+            ~/Library/Audio/Plug-Ins/Components/
+          
+          Terminal command:
+            cp -r AU/AlioopSend.component ~/Library/Audio/Plug-Ins/Components/
+          
+          Reaper Setup:
+          ------------
+          1. Open Reaper
+          2. Go to Preferences (Cmd+,)
+          3. Navigate to Plug-ins → VST
+          4. Click "Re-scan"
+          5. Find "Alioop Send" in FX browser
+          
+          Troubleshooting:
+          ---------------
+          - If plugin doesn't appear, check the paths above
+          - Clear Reaper's plugin cache: delete ~/Library/Application Support/REAPER/reaper-vstplugins64.ini
+          - Check Console.app for errors during rescan
+          
+          Support: https://github.com/YOUR_USERNAME/audomte
+          EOF
+          
+          # Create ZIP
+          cd package
+          zip -r ../AlioopSend-macOS-v1.0.0.zip .
+      
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: AlioopSend-macOS
+          path: AlioopSend-macOS-v1.0.0.zip
+          retention-days: 90
+
+  build-windows:
+    name: Build Windows (VST3)
+    runs-on: windows-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      
+      - name: Install JUCE
+        shell: bash
+        run: |
+          git clone --depth 1 --branch 7.0.12 https://github.com/juce-framework/JUCE.git
+          echo "JUCE_PATH=${{ github.workspace }}/JUCE" >> $GITHUB_ENV
+      
+      - name: Configure CMake
+        working-directory: alioop-plugin
+        run: |
+          mkdir build
+          cd build
+          cmake .. `
+            -G "Visual Studio 17 2022" `
+            -A x64 `
+            -DCMAKE_BUILD_TYPE=Release `
+            -DJUCE_PATH=$env:JUCE_PATH
+      
+      - name: Build Plugin
+        working-directory: alioop-plugin/build
+        run: cmake --build . --config Release --parallel
+      
+      - name: Package Artifacts
+        shell: bash
+        run: |
+          mkdir -p package/VST3
+          
+          # Copy VST3
+          cp -r alioop-plugin/build/AlioopSend_artefacts/Release/VST3/AlioopSend.vst3 \
+            package/VST3/
+          
+          # Add installation instructions
+          cat > package/INSTALL_WINDOWS.txt << 'EOF'
+          ALIOOP SEND - Windows Installation
+          ===================================
+          
+          VST3 Installation:
+          ------------------
+          Copy the entire AlioopSend.vst3 folder to:
+            C:\Program Files\Common Files\VST3\
+          
+          Or your custom VST3 path if you've configured one in Reaper.
+          
+          Reaper Setup:
+          ------------
+          1. Open Reaper
+          2. Go to Options → Preferences
+          3. Navigate to Plug-ins → VST
+          4. Click "Re-scan"
+          5. Find "Alioop Send" in FX browser
+          
+          Troubleshooting:
+          ---------------
+          - If plugin doesn't appear, check the path above
+          - Clear Reaper's plugin cache and rescan
+          - Check if Windows Defender blocked the DLL
+          - Right-click .vst3 folder → Properties → Unblock
+          
+          Support: https://github.com/YOUR_USERNAME/audomte
+          EOF
+          
+          # Create ZIP
+          cd package
+          7z a -tzip ../AlioopSend-Windows-v1.0.0.zip .
+      
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: AlioopSend-Windows
+          path: AlioopSend-Windows-v1.0.0.zip
+          retention-days: 90
+
+  build-linux:
+    name: Build Linux (VST3)
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libasound2-dev \
+            libjack-jackd2-dev \
+            libcurl4-openssl-dev \
+            libfreetype6-dev \
+            libx11-dev \
+            libxcomposite-dev \
+            libxcursor-dev \
+            libxext-dev \
+            libxinerama-dev \
+            libxrandr-dev \
+            libxrender-dev \
+            libglu1-mesa-dev \
+            mesa-common-dev
+      
+      - name: Install JUCE
+        run: |
+          git clone --depth 1 --branch 7.0.12 https://github.com/juce-framework/JUCE.git
+          echo "JUCE_PATH=${{ github.workspace }}/JUCE" >> $GITHUB_ENV
+      
+      - name: Configure CMake
+        working-directory: alioop-plugin
+        run: |
+          mkdir build
+          cd build
+          cmake .. \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DJUCE_PATH=${{ env.JUCE_PATH }}
+      
+      - name: Build Plugin
+        working-directory: alioop-plugin/build
+        run: cmake --build . --config Release --parallel
+      
+      - name: Package Artifacts
+        run: |
+          mkdir -p package/VST3
+          
+          # Copy VST3
+          cp -r alioop-plugin/build/AlioopSend_artefacts/Release/VST3/AlioopSend.vst3 \
+            package/VST3/
+          
+          # Add installation instructions
+          cat > package/INSTALL_LINUX.txt << 'EOF'
+          ALIOOP SEND - Linux Installation
+          =================================
+          
+          VST3 Installation:
+          ------------------
+          Copy the entire AlioopSend.vst3 folder to:
+            ~/.vst3/
+          
+          Terminal command:
+            mkdir -p ~/.vst3
+            cp -r VST3/AlioopSend.vst3 ~/.vst3/
+          
+          Reaper Setup:
+          ------------
+          1. Open Reaper
+          2. Go to Preferences
+          3. Navigate to Plug-ins → VST
+          4. Add ~/.vst3 to VST paths if not already there
+          5. Click "Re-scan"
+          6. Find "Alioop Send" in FX browser
+          
+          Support: https://github.com/YOUR_USERNAME/audomte
+          EOF
+          
+          # Create tarball
+          cd package
+          tar -czf ../AlioopSend-Linux-v1.0.0.tar.gz .
+      
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: AlioopSend-Linux
+          path: AlioopSend-Linux-v1.0.0.tar.gz
+          retention-days: 90
+
+  create-release:
+    name: Create Release
+    needs: [build-macos, build-windows, build-linux]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      
+      - name: Display structure
+        run: ls -R artifacts
+      
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: plugin-v1.0.0-build-${{ github.run_number }}
+          release_name: Alioop Send Plugin v1.0.0 (Build ${{ github.run_number }})
+          body: |
+            # Alioop Send Plugin v1.0.0
+            
+            ## 🎵 Audio Plugin for DAWs
+            
+            Record audio directly in your DAW and send it to the Alioop platform for processing.
+            
+            ### 📦 Downloads
+            
+            - **macOS** (VST3 + AU): See assets below
+            - **Windows** (VST3): See assets below
+            - **Linux** (VST3): See assets below
+            
+            ### 📖 Installation
+            
+            Each package contains detailed installation instructions in the INSTALL file.
+            
+            **Quick Install (macOS):**
+            ```bash
+            # VST3
+            cp -r AlioopSend.vst3 ~/Library/Audio/Plug-Ins/VST3/
+            
+            # AU
+            cp -r AlioopSend.component ~/Library/Audio/Plug-Ins/Components/
+            ```
+            
+            **Quick Install (Windows):**
+            ```
+            Copy AlioopSend.vst3 to C:\Program Files\Common Files\VST3\
+            ```
+            
+            ### 🔧 Supported DAWs
+            
+            - Reaper
+            - Logic Pro (macOS AU)
+            - Ableton Live
+            - FL Studio
+            - Pro Tools (via VST3)
+            - And any VST3/AU compatible DAW
+            
+            ### 📝 Features
+            
+            - ✨ Record audio directly in DAW
+            - 📤 Automatic upload to Alioop platform
+            - 🎨 Clean, branded UI
+            - 🔒 Secure client form integration
+            - 💾 Local WAV export backup
+            
+            ---
+            
+            Built: ${{ github.event.head_commit.timestamp }}
+            Commit: ${{ github.sha }}
+          draft: false
+          prerelease: false
+      
+      - name: Upload macOS Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./artifacts/AlioopSend-macOS/AlioopSend-macOS-v1.0.0.zip
+          asset_name: AlioopSend-macOS-v1.0.0.zip
+          asset_content_type: application/zip
+      
+      - name: Upload Windows Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./artifacts/AlioopSend-Windows/AlioopSend-Windows-v1.0.0.zip
+          asset_name: AlioopSend-Windows-v1.0.0.zip
+          asset_content_type: application/zip
+      
+      - name: Upload Linux Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./artifacts/AlioopSend-Linux/AlioopSend-Linux-v1.0.0.tar.gz
+          asset_name: AlioopSend-Linux-v1.0.0.tar.gz
+          asset_content_type: application/gzip
