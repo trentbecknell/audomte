@@ -37,7 +37,7 @@ juce::File AlioopAPI::exportAudioToWAV(const juce::AudioBuffer<float>& buffer, d
     {
         writer.reset(wavFormat.createWriterFor(outputStream.get(),
                                                sampleRate,
-                                               buffer.getNumChannels(),
+                                               static_cast<unsigned int>(buffer.getNumChannels()),
                                                24, // 24-bit
                                                {},
                                                0));
@@ -89,8 +89,8 @@ bool AlioopAPI::uploadFile(const juce::File& audioFile,
     }
     
     // Upload using POST with multipart data
-    juce::URL::InputStreamOptions options(juce::URL::ParameterHandling::inAddress);
-    options = options.withExtraHeaders("Content-Type: multipart/form-data");
+    auto options = juce::URL::InputStreamOptions(juce::URL::ParameterHandling::inAddress)
+                       .withExtraHeaders("Content-Type: multipart/form-data");
     
     // For a real implementation, you'd use JUCE's URL::createOutputStream() or curl
     // This is a simplified version showing the concept
@@ -109,7 +109,7 @@ bool AlioopAPI::uploadFile(const juce::File& audioFile,
     if (uploadProcess.start(uploadCommand))
     {
         uploadProcess.waitForProcessToFinish(30000); // 30 second timeout
-        int exitCode = uploadProcess.getExitCode();
+        auto exitCode = static_cast<int>(uploadProcess.getExitCode());
         
         if (exitCode == 0)
         {
@@ -156,8 +156,8 @@ void AlioopAPI::sendDelivery(const juce::String& clientName,
     if (success)
     {
         // Show success notification
-        juce::AlertWindow::showMessageBoxAsync(
-            juce::AlertWindow::InfoIcon,
+        juce::NativeMessageBox::showMessageBoxAsync(
+            juce::MessageBoxIconType::InfoIcon,
             "Delivery Sent!",
             "Successfully sent to " + clientName + "\nClient will receive email with download link."
         );
@@ -165,8 +165,8 @@ void AlioopAPI::sendDelivery(const juce::String& clientName,
     else
     {
         // Show error
-        juce::AlertWindow::showMessageBoxAsync(
-            juce::AlertWindow::WarningIcon,
+        juce::NativeMessageBox::showMessageBoxAsync(
+            juce::MessageBoxIconType::WarningIcon,
             "Upload Failed",
             "Could not send delivery: " + lastError
         );

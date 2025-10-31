@@ -265,11 +265,13 @@ void AlioopAudioProcessorEditor::sendButtonClicked()
                              "Price: $" + juce::String(price, 2) + "\n" +
                              "Service: " + serviceEditor.getText();
     
-    bool confirmed = juce::AlertWindow::showOkCancelBox (juce::AlertWindow::QuestionIcon,
-                                                         "Confirm Delivery",
-                                                         confirmMsg,
-                                                         "Send",
-                                                         "Cancel");
+    bool confirmed = juce::NativeMessageBox::showOkCancelBox(
+        juce::MessageBoxIconType::QuestionIcon,
+        "Confirm Delivery",
+        confirmMsg,
+        nullptr,
+        nullptr
+    );
     
     if (confirmed)
     {

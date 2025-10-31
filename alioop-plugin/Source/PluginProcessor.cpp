@@ -78,16 +78,16 @@ int AlioopAudioProcessor::getCurrentProgram()
     return 0;
 }
 
-void AlioopAudioProcessor::setCurrentProgram (int index)
+void AlioopAudioProcessor::setCurrentProgram (int /*index*/)
 {
 }
 
-const juce::String AlioopAudioProcessor::getProgramName (int index)
+const juce::String AlioopAudioProcessor::getProgramName (int /*index*/)
 {
     return {};
 }
 
-void AlioopAudioProcessor::changeProgramName (int index, const juce::String& newName)
+void AlioopAudioProcessor::changeProgramName (int /*index*/, const juce::String& /*newName*/)
 {
 }
 
@@ -96,7 +96,7 @@ void AlioopAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock
 {
     currentSampleRate = sampleRate;
     currentBuffer.setSize(2, samplesPerBlock);
-    recordedBuffer.setSize(2, sampleRate * 300); // Max 5 minutes
+    recordedBuffer.setSize(2, static_cast<int>(sampleRate * 300)); // Max 5 minutes
 }
 
 void AlioopAudioProcessor::releaseResources()
@@ -124,7 +124,7 @@ bool AlioopAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) c
 }
 #endif
 
-void AlioopAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
+void AlioopAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& /*midiMessages*/)
 {
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
