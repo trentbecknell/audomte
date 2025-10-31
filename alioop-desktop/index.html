@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alioop Desktop</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #161614 0%, #0a0a09 100%);
+            color: #fcf5eb;
+            overflow-x: hidden;
+        }
+        
+        .header {
+            background: #f05709;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(240, 87, 9, 0.3);
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .container {
+            padding: 20px;
+        }
+        
+        .status {
+            background: rgba(252, 245, 235, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #f05709;
+        }
+        
+        .status.watching {
+            border-left-color: #4CAF50;
+        }
+        
+        .form-section {
+            background: rgba(252, 245, 235, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .form-section.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #f05709;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid rgba(252, 245, 235, 0.2);
+            border-radius: 6px;
+            background: rgba(252, 245, 235, 0.1);
+            color: #fcf5eb;
+            font-family: inherit;
+            font-size: 14px;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #f05709;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #f05709 0%, #d94d08 100%);
+            color: white;
+            width: 100%;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(240, 87, 9, 0.4);
+        }
+        
+        .btn-secondary {
+            background: rgba(252, 245, 235, 0.1);
+            color: #fcf5eb;
+            border: 2px solid rgba(252, 245, 235, 0.2);
+        }
+        
+        .file-info {
+            background: rgba(240, 87, 9, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 2px solid rgba(240, 87, 9, 0.3);
+        }
+        
+        .file-info h3 {
+            color: #f05709;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .file-info p {
+            font-size: 13px;
+            color: rgba(252, 245, 235, 0.8);
+            margin: 5px 0;
+        }
+        
+        .settings-section {
+            background: rgba(252, 245, 235, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+        }
+        
+        .folder-select {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+        
+        .folder-select input {
+            flex: 1;
+        }
+        
+        .alert {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            display: none;
+        }
+        
+        .alert.success {
+            background: rgba(76, 175, 80, 0.2);
+            border: 2px solid #4CAF50;
+            color: #4CAF50;
+        }
+        
+        .alert.error {
+            background: rgba(244, 67, 54, 0.2);
+            border: 2px solid #f44336;
+            color: #f44336;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 10px;
+            background: rgba(252, 245, 235, 0.1);
+            border: none;
+            border-radius: 6px;
+            color: #fcf5eb;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+        }
+        
+        .tab.active {
+            background: #f05709;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎵 Alioop Desktop</h1>
+        <p>Automatic Audio Delivery</p>
+    </div>
+    
+    <div class="container">
+        <div id="status" class="status">
+            <strong>⏸️ Not Watching</strong>
+            <p id="statusText">Configure watch folder in Settings</p>
+        </div>
+        
+        <div class="alert success" id="successAlert"></div>
+        <div class="alert error" id="errorAlert"></div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('upload')">📤 Upload</button>
+            <button class="tab" onclick="showTab('settings')">⚙️ Settings</button>
+        </div>
+        
+        <!-- Upload Section -->
+        <div id="uploadSection" class="form-section active">
+            <div id="fileInfoContainer"></div>
+            
+            <div id="uploadForm">
+                <p style="text-align: center; color: rgba(252, 245, 235, 0.6); padding: 40px;">
+                    Waiting for new files...<br>
+                    <small>Drop audio files in your watch folder</small>
+                </p>
+            </div>
+        </div>
+        
+        <!-- Settings Section -->
+        <div id="settingsSection" class="form-section">
+            <h2 style="margin-bottom: 20px; color: #f05709;">⚙️ Settings</h2>
+            
+            <div class="form-group">
+                <label>Watch Folder</label>
+                <div class="folder-select">
+                    <input type="text" id="watchFolder" readonly>
+                    <button class="btn btn-secondary" onclick="chooseFolder()">Browse</button>
+                </div>
+                <small style="color: rgba(252, 245, 235, 0.6); font-size: 12px;">
+                    Folder where your DAW bounces files
+                </small>
+            </div>
+            
+            <div class="form-group">
+                <label>Default Price ($)</label>
+                <input type="number" id="defaultPrice" step="0.01" min="0">
+            </div>
+            
+            <div class="form-group">
+                <label>API URL</label>
+                <input type="text" id="apiUrl">
+            </div>
+            
+            <button class="btn btn-primary" onclick="saveSettings()">💾 Save Settings</button>
+        </div>
+    </div>
+    
+    <script>
+        const { ipcRenderer } = require('electron');
+        
+        let currentFile = null;
+        
+        // Load settings on start
+        async function loadSettings() {
+            const settings = await ipcRenderer.invoke('get-settings');
+            document.getElementById('watchFolder').value = settings.watchFolder;
+            document.getElementById('defaultPrice').value = settings.defaultPrice;
+            document.getElementById('apiUrl').value = settings.apiUrl;
+            
+            updateStatus(settings.watching, settings.watchFolder);
+        }
+        
+        function updateStatus(watching, folder) {
+            const statusEl = document.getElementById('status');
+            const statusTextEl = document.getElementById('statusText');
+            
+            if (watching) {
+                statusEl.className = 'status watching';
+                statusEl.innerHTML = '<strong>👀 Watching for Files</strong>';
+                statusTextEl.textContent = folder;
+            } else {
+                statusEl.className = 'status';
+                statusEl.innerHTML = '<strong>⏸️ Not Watching</strong>';
+                statusTextEl.textContent = 'Enable watching in Settings';
+            }
+        }
+        
+        async function chooseFolder() {
+            const folder = await ipcRenderer.invoke('choose-folder');
+            if (folder) {
+                document.getElementById('watchFolder').value = folder;
+            }
+        }
+        
+        async function saveSettings() {
+            const settings = {
+                watchFolder: document.getElementById('watchFolder').value,
+                defaultPrice: document.getElementById('defaultPrice').value,
+                apiUrl: document.getElementById('apiUrl').value
+            };
+            
+            const result = await ipcRenderer.invoke('save-settings', settings);
+            
+            if (result.success) {
+                showAlert('success', '✅ Settings saved! Watcher restarted.');
+                updateStatus(true, settings.watchFolder);
+            }
+        }
+        
+        function showTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tab + 'Section').classList.add('active');
+        }
+        
+        function showAlert(type, message) {
+            const alertId = type === 'success' ? 'successAlert' : 'errorAlert';
+            const alert = document.getElementById(alertId);
+            alert.textContent = message;
+            alert.style.display = 'block';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+        
+        async function sendFile() {
+            if (!currentFile) return;
+            
+            const data = {
+                filePath: currentFile.filePath,
+                clientName: document.getElementById('clientName').value,
+                clientEmail: document.getElementById('clientEmail').value,
+                clientPhone: document.getElementById('clientPhone').value,
+                price: document.getElementById('price').value,
+                serviceName: document.getElementById('serviceName').value
+            };
+            
+            // Validate
+            if (!data.clientName || !data.clientEmail || !data.price) {
+                showAlert('error', '❌ Please fill in all required fields');
+                return;
+            }
+            
+            document.getElementById('sendBtn').disabled = true;
+            document.getElementById('sendBtn').textContent = '⏳ Sending...';
+            
+            const result = await ipcRenderer.invoke('send-delivery', data);
+            
+            if (result.success) {
+                showAlert('success', `✅ File sent to ${data.clientName}!`);
+                currentFile = null;
+                document.getElementById('fileInfoContainer').innerHTML = '';
+                document.getElementById('uploadForm').innerHTML = '<p style="text-align: center; color: rgba(252, 245, 235, 0.6); padding: 40px;">Waiting for new files...<br><small>Drop audio files in your watch folder</small></p>';
+            } else {
+                showAlert('error', `❌ Error: ${result.error}`);
+                document.getElementById('sendBtn').disabled = false;
+                document.getElementById('sendBtn').textContent = '📤 Send to Client';
+            }
+        }
+        
+        // Listen for new files
+        ipcRenderer.on('new-file', (event, fileData) => {
+            currentFile = fileData;
+            showTab('upload');
+            
+            const settings = ipcRenderer.invoke('get-settings').then(s => {
+                document.getElementById('fileInfoContainer').innerHTML = `
+                    <div class="file-info">
+                        <h3>📁 ${fileData.filename}</h3>
+                        <p><strong>Size:</strong> ${fileData.fileSize} MB</p>
+                        <p><strong>Location:</strong> ${fileData.filePath}</p>
+                    </div>
+                `;
+                
+                document.getElementById('uploadForm').innerHTML = `
+                    <div class="form-group">
+                        <label>Client Name *</label>
+                        <input type="text" id="clientName" value="${fileData.clientName}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Client Email *</label>
+                        <input type="email" id="clientEmail" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Phone (optional)</label>
+                        <input type="tel" id="clientPhone">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Price ($) *</label>
+                        <input type="number" id="price" value="${s.defaultPrice}" step="0.01" min="0" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Service/Project Name</label>
+                        <input type="text" id="serviceName" value="${fileData.projectName}">
+                    </div>
+                    
+                    <button class="btn btn-primary" id="sendBtn" onclick="sendFile()">📤 Send to Client</button>
+                `;
+            });
+        });
+        
+        // Initialize
+        loadSettings();
+    </script>
+</body>
+</html>

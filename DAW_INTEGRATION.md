@@ -204,9 +204,96 @@ Desktop app that auto-detects bounces:
 
 ## 🔜 Roadmap
 
-- ✅ Phase 1: URL handler (live now!)
-- 🔄 Phase 2: Desktop app with watch folder
-- 📋 Phase 3: DAW-specific export scripts  
-- 🎯 Phase 4: VST/AU plugin (if requested)
+- ✅ **Phase 1:** URL handler (live now!)
+- ✅ **Phase 2:** Desktop app with watch folder (ready!)
+- ✅ **Phase 3:** DAW-specific export scripts (available now!)
+- 🎯 **Phase 4:** VST/AU plugin (if requested)
 
-**Start using Phase 1 today!** No installation needed - just set up a keyboard shortcut.
+---
+
+## 📦 Phase 3: Export Scripts (NEW!)
+
+**Automate delivery from inside your DAW with keyboard shortcuts!**
+
+We've created production-ready scripts for all major DAWs that integrate Alioop directly into your workflow:
+
+### 🎹 Available Scripts
+
+#### Pro Tools
+- **Type:** AppleScript
+- **Location:** `~/Documents/Pro Tools/Scripts/`
+- **Access:** Setup → Scripts → AlioopSendDelivery
+- **[Full Documentation →](./daw-export-scripts/pro-tools/)**
+
+#### Logic Pro
+- **Type:** AppleScript  
+- **Location:** `~/Music/Audio Music Apps/Scripts/`
+- **Access:** Script Menu or keyboard shortcut (Opt+Cmd+A)
+- **[Full Documentation →](./daw-export-scripts/logic-pro/)**
+
+#### Ableton Live
+- **Type:** Python (Standalone or Control Surface)
+- **Location:** Command line or Remote Scripts folder
+- **Access:** Terminal or MIDI controller
+- **[Full Documentation →](./daw-export-scripts/ableton/)**
+
+#### Studio One
+- **Type:** JavaScript
+- **Location:** `~/Documents/Studio One/Scripts/`
+- **Access:** Macros → Script → AlioopSendDelivery
+- **[Full Documentation →](./daw-export-scripts/studio-one/)**
+
+### ⚡ Quick Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/trentbecknell/audomte.git
+cd audomte/daw-export-scripts
+
+# Install for your DAW (choose one):
+
+# Pro Tools:
+cp pro-tools/AlioopSendDelivery.scpt ~/Documents/Pro\ Tools/Scripts/
+
+# Logic Pro:
+cp logic-pro/AlioopSendDelivery.scpt ~/Music/Audio\ Music\ Apps/Scripts/
+
+# Ableton (standalone):
+python ableton/alioop_standalone.py
+
+# Studio One:
+cp studio-one/AlioopSendDelivery.js ~/Documents/Studio\ One/Scripts/
+```
+
+### 🎯 Workflow with Export Scripts
+
+1. **Finish your mix** in DAW
+2. **Bounce/export** file with naming: `ClientName_ProjectName.wav`
+3. **Hit keyboard shortcut** (e.g., Cmd+Shift+A)
+4. **Fill dialog prompts:**
+   - Client name (auto-parsed from filename)
+   - Client email
+   - Price (default: $50)
+5. **Browser opens** with pre-filled form
+6. **Upload file** → Click Send!
+
+**Total time: ~30 seconds** ⚡
+
+### 📚 Complete Documentation
+
+**[View Full Export Scripts Guide →](./daw-export-scripts/README.md)**
+
+Includes:
+- Detailed installation for each DAW
+- Keyboard shortcut setup
+- MIDI controller mapping
+- Best practices & file naming
+- Troubleshooting guides
+- Integration with Desktop App
+
+---
+
+**Start using today!** Choose your integration level:
+- **Phase 1:** URL handler (no install)
+- **Phase 2:** Desktop app (auto-detection)  
+- **Phase 3:** Export scripts (keyboard shortcuts)
